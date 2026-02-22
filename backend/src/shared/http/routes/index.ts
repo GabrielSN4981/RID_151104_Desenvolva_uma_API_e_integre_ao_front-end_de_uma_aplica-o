@@ -7,6 +7,6 @@ routes.get("/health", (request, response) => {
   return response.json({ message: "Hello Dev!" });
 });
 
-routes.use("/books", booksRouter);
+routes.use("/livros", booksRouter);
 
 export default routes;
