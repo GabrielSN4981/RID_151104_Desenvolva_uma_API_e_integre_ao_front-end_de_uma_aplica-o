@@ -10,7 +10,7 @@ export default class DeleteBookService {
     const book = await booksRepositories.findByID(id);
 
     if (!book) {
-      throw new AppError("Book not found", 404);
+      throw new AppError("Livro não encontrado.", 404);
     }
 
     await booksRepositories.remove(book);

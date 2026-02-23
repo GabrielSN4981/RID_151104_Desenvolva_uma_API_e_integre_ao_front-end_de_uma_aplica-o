@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import "./index.scss";
-import SubmenuLivros from "../../components/SubmenuLivros/SubmenuLivros";
 import { LivrosService } from "../../api/LivrosService";
 import { Link } from "react-router-dom";
 
@@ -19,8 +18,8 @@ const Livros = () => {
     );
     if (valida) {
       await LivrosService.deleteLivro(livroId)
-        .then(({ data }) => {
-          alert(data.mensagem);
+        .then(() => {
+          alert("Livro deletado com sucesso!");
           getLivros();
         })
         .catch(({ response: { data, status } }) => {
@@ -36,7 +35,6 @@ const Livros = () => {
   return (
     <>
       <Header />
-      <SubmenuLivros />
       <div className="livros">
         <h1>Escolha o seu livro</h1>
         <ul>

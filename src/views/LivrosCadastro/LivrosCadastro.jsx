@@ -1,16 +1,18 @@
 import { useState } from "react";
 import Header from "../../components/Header/Header";
 import "./index.scss";
-import SubmenuLivros from "../../components/SubmenuLivros/SubmenuLivros";
 import { LivrosService } from "../../api/LivrosService";
+import { useNavigate } from "react-router-dom";
 
 const LivrosCadastro = () => {
-  const [livro, setLivro] = useState([]);
+  const navigate = useNavigate();
 
-  async function getLivro() {
-    const { data } = await LivrosService.getLivros();
-    setLivro(data);
-  }
+  const [livro, setLivro] = useState({
+    title: "",
+    num_pages: "",
+    isbn: "",
+    publisher: "",
+  });
 
   async function createLivro() {
     const body = {
@@ -29,23 +31,20 @@ const LivrosCadastro = () => {
       livro.publisher != undefined &&
       livro.publisher != ""
     ) {
-      await LivrosService.createLivro(body)
-        .then((response) => {
-          alert(response.data);
-          document.getElementById("formulario").reset();
-        })
-        .catch(({ response: { data, status } }) => {
-          alert(`${status} - ${data}`);
-        });
+      try {
+        await LivrosService.createLivro(body);
+        alert("Livro cadastrado com sucesso!");
+        document.getElementById("formulario").reset();
+        navigate("/livros");
+      } catch ({ response: { data, status } }) {
+        alert(`${status} - ${data.message}`);
+      }
     }
-
-    getLivro();
   }
 
   return (
     <>
       <Header />
-      <SubmenuLivros />
       <div className="livrosCadastro">
         <h1>Cadastro de Livros</h1>
         <div>
@@ -96,6 +95,7 @@ const LivrosCadastro = () => {
             </div>
             <div className="form-group">
               <button
+                type="button"
                 onClick={() => {
                   createLivro();
                 }}

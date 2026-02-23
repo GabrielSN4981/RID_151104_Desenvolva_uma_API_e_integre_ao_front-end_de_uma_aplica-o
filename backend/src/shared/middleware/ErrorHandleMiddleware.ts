@@ -6,7 +6,7 @@ export default class ErrorHandleMiddleware {
     error: Error,
     _req: Request,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ) {
     if (error instanceof AppError) {
       return res.status(error.statusCode).json({

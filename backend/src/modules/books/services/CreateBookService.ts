@@ -19,7 +19,13 @@ export default class CreateBookService {
     const bookExists = await booksRepositories.findByTitle(title);
 
     if (bookExists) {
-      throw new AppError("Book already exists.", 409);
+      throw new AppError("Já existe um livro com este título.", 409);
+    }
+
+    const isbnExists = await booksRepositories.findByISBN(isbn);
+
+    if (isbnExists) {
+      throw new AppError("Já existe um livro com este ISBN.", 409);
     }
 
     const book = booksRepositories.create({
@@ -34,4 +40,3 @@ export default class CreateBookService {
     return book;
   }
 }
-

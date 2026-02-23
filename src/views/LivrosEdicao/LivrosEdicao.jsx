@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import "./index.scss";
-import SubmenuLivros from "../../components/SubmenuLivros/SubmenuLivros";
 import { useParams } from "react-router-dom";
 import { LivrosService } from "../../api/LivrosService";
+import { useNavigate } from "react-router-dom";
 
 const LivrosEdicao = () => {
+  const navigate = useNavigate();
+
   let { livroId } = useParams();
 
-  const [livro, setLivro] = useState([]);
+  const [livro, setLivro] = useState({
+    id: "",
+    title: "",
+    num_pages: "",
+    isbn: "",
+    publisher: "",
+  });
 
   async function getLivro() {
     const { data } = await LivrosService.getLivro(livroId);
@@ -17,15 +25,12 @@ const LivrosEdicao = () => {
 
   async function editLivro() {
     const body = {
-      id: Number(livro.id),
-      titulo: livro.title,
+      title: livro.title,
       num_pages: Number(livro.num_pages),
       isbn: livro.isbn,
       publisher: livro.publisher,
     };
     if (
-      livro.id != undefined &&
-      livro.id != "" &&
       livro.title != undefined &&
       livro.title != "" &&
       livro.num_pages != undefined &&
@@ -35,13 +40,14 @@ const LivrosEdicao = () => {
       livro.publisher != undefined &&
       livro.publisher != ""
     ) {
-      await LivrosService.updateLivro(Number(livro.id), body)
-        .then(({ data }) => {
-          alert(data.mensagem);
-        })
-        .catch(({ response: { data, status } }) => {
-          alert(`${status} - ${data}`);
-        });
+      try {
+        const data = await LivrosService.updateLivro(livroId, body);
+        alert("Livro atualizado com sucesso!");
+        setLivro(data);
+        navigate("/livros");
+      } catch ({ response: { data, status } }) {
+        alert(`${status} - ${data.message}`);
+      }
     }
   }
 
@@ -52,7 +58,6 @@ const LivrosEdicao = () => {
   return (
     <>
       <Header />
-      <SubmenuLivros />
       <div className="livrosCadastro">
         <h1>Edição de Livros</h1>
         <div>
@@ -115,6 +120,7 @@ const LivrosEdicao = () => {
             </div>
             <div className="form-group">
               <button
+                type="button"
                 onClick={() => {
                   editLivro();
                 }}
